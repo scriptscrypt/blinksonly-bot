@@ -1,8 +1,13 @@
 // import { envTelegramBotToken } from "@/lib/envConfig/envConfig";
-import { webhookCallback, Bot} from "grammy";
+import { webhookCallback, Bot } from "grammy";
 
-import { envTelegramBotToken } from "../lib/envConfig/envConfig";
+import { envMongoUri, envTelegramBotToken } from "../lib/envConfig/envConfig";
+import { MongoClient } from "mongodb";
 const bot = new Bot(envTelegramBotToken || "");
+
+const clientPromise: Promise<MongoClient> = MongoClient.connect(
+  envMongoUri || ""
+);
 
 // Define the keyboard layout
 const keyboardLayout = [
@@ -111,9 +116,10 @@ bot.command("amount", async (ctx) => {
       );
     }
 
-    const [command, amount] = ctx.message.text.split(/\s+/);
-    const solAmount = amount ? amount.trim() : null;
-
+    const [amount, ...rest] = ctx.message.text.split(/\s+/);
+    const splAddress = rest.slice(0, -1).join(" ").trim();
+    const solAmount = rest[rest.length - 1];
+    console.log(`splAddress :`, splAddress);
     // Refined validation logic to support various number formats
     if (
       solAmount !== "" &&
@@ -124,15 +130,40 @@ bot.command("amount", async (ctx) => {
         `You entered SOL amount: ${solAmount} groupId: ${ctx.chat.id}`
       );
       // Here you can add any additional logic, e.g., sending the amount to a backend
-      console.log(`current ctx`, ctx);
+      // console.log(`current ctx`, ctx);
       console.log(`current chatId`, ctx.chat.id);
       console.log(`current userId :`, ctx.message.chat.id);
 
       // Add these to DB
+      const client = await clientPromise;
+      const db = client.db();
+
+      // // `groups` is the collection name
+      const groupsCollection = db.collection("groups");
+      if (!ctx.chat.id || !ctx.message.chat.id || !splAddress) {
+        throw new Error("Telegram chat ID is not set in environment variables");
+      }
+
+      // save to DB :
+      console.log(
+        `${ctx.message.chat.id} Id saving to DB`,
+        ctx.message.chat.id
+      );
+
+      groupsCollection.insertOne({
+        amount,
+        chatId: ctx.chat.id,
+        chatUserId: ctx.message.chat.id,
+        chatName: ctx.chat.title,
+        chatType: ctx.chat.type,
+        splAddress,
+        timestamp: Date.now().toString(),
+      });
+
       await ctx.reply(`Received SOL amount: ${solAmount}`);
 
       // Get a Blink URL :
-      const blinkURL = `https://blinksonly.com/api/actions/start/${ctx.chat.id}`;
+      const blinkURL = `https://blinktochat.fun/api/actions/start/${ctx.chat.id}/${splAddress}`;
       await ctx.reply(blinkURL);
 
       const dialectUrl = `https://dial.to/devnet?action=solana-action:${blinkURL}`;
@@ -158,8 +189,9 @@ bot.command("amount", async (ctx) => {
   }
 });
 
-// bot.start();
-
+// For Vercel Node Webhook :
 // export default webhookCallback(bot, "http");
+// export default bot;
 
-export default bot;
+// For Dev to start the BOT :
+bot.start();
