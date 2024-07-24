@@ -112,30 +112,36 @@ bot.command("amount", async (ctx) => {
       );
     }
 
-    // Extract the amount from the command parameters
-    const [, , ...args] = ctx.message.text.split(/\s+/); // Splitting by whitespace
-    const solAmount = args.join(" ").trim(); // Rejoin arguments and trim whitespace
+    const [command, amount] = ctx.message.text.split(/\s+/);
+    const solAmount = amount ? amount.trim() : null;
 
     // Refined validation logic to support various number formats
     if (
       solAmount !== "" &&
-      !isNaN(parseFloat(solAmount)) &&
-      parseFloat(solAmount) > 0
+      !isNaN(parseFloat(solAmount || "")) &&
+      parseFloat(solAmount || "") > 0
     ) {
-      await ctx.reply(`You entered SOL amount: ${solAmount}`);
+      await ctx.reply(
+        `You entered SOL amount: ${solAmount} groupId: ${ctx.chat.id}`
+      );
       // Here you can add any additional logic, e.g., sending the amount to a backend
       console.log(`current ctx`, ctx);
+      console.log(`current chatId`, ctx.chat.id);
       console.log(`current chatId`, ctx.chat.id);
       console.log(`current userId :`, ctx.message.chat.id);
 
       // Add these to DB
+      await ctx.reply(`Received SOL amount: ${solAmount}`);
+
+      // Get a Blink URL : 
+      await ctx.reply(`https://blinksonly.com/api/actions/start/${ctx.chat.id}`);
 
       // Get user's Id and current chat's Id
-
     } else {
       // Provide more detailed feedback or suggestions
       await ctx.reply(
-        'It seems like you didn\'t enter a number. Please try again with a valid number, like this: "/amount 0.01".'
+        `It seems like you didn\'t enter a number. Please try again with a valid number, like this: "/amount 0.01".
+        and groupId : ${ctx.chat.id}`
       );
 
       console.log(`current ctx`, ctx);
