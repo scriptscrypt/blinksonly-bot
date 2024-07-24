@@ -127,15 +127,18 @@ bot.command("amount", async (ctx) => {
       // Here you can add any additional logic, e.g., sending the amount to a backend
       console.log(`current ctx`, ctx);
       console.log(`current chatId`, ctx.chat.id);
-      console.log(`current chatId`, ctx.chat.id);
       console.log(`current userId :`, ctx.message.chat.id);
 
       // Add these to DB
       await ctx.reply(`Received SOL amount: ${solAmount}`);
 
-      // Get a Blink URL : 
-      await ctx.reply(`https://blinksonly.com/api/actions/start/${ctx.chat.id}`);
+      // Get a Blink URL :
+      const blinkURL = `https://blinksonly.com/api/actions/start/${ctx.chat.id}`;
+      await ctx.reply(blinkURL);
 
+      const dialectUrl = `https://dial.to/devnet?action=solana-action:${blinkURL}`;
+
+      await ctx.reply(dialectUrl);
       // Get user's Id and current chat's Id
     } else {
       // Provide more detailed feedback or suggestions
