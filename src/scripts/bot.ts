@@ -1,8 +1,7 @@
 // import { envTelegramBotToken } from "@/lib/envConfig/envConfig";
-import { Bot } from "grammy";
+import { webhookCallback, Bot} from "grammy";
 
 import { envTelegramBotToken } from "../lib/envConfig/envConfig";
-
 const bot = new Bot(envTelegramBotToken || "");
 
 // Define the keyboard layout
@@ -159,4 +158,6 @@ bot.command("amount", async (ctx) => {
   }
 });
 
-bot.start();
+// bot.start();
+
+export default webhookCallback(bot, "http");
