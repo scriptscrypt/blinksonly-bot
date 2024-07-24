@@ -107,7 +107,7 @@ bot.callbackQuery("help", async (ctx) => {
 
 // Modified command to /amount
 // Handler for the /amount command
-bot.command("amount", async (ctx) => {
+bot.command("magic", async (ctx) => {
   try {
     // Check if ctx.message exists
     if (!ctx.message) {
