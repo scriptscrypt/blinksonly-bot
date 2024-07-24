@@ -160,4 +160,6 @@ bot.command("amount", async (ctx) => {
 
 // bot.start();
 
-export default webhookCallback(bot, "http");
+// export default webhookCallback(bot, "http");
+
+export default bot;
