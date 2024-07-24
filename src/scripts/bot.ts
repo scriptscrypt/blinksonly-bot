@@ -1,0 +1,80 @@
+// import { envTelegramBotToken } from "@/lib/envConfig/envConfig";
+import { Bot } from "grammy";
+
+import { envTelegramBotToken } from "../lib/envConfig/envConfig";
+
+const bot = new Bot(envTelegramBotToken || "");
+
+// Define the keyboard layout
+const keyboardLayout = [
+  [{ text: "Enter SOL Amount", callback_data: "sol_amt" }],
+  [{ text: "Help", callback_data: "help" }],
+];
+
+// Handler for the /start command
+bot.command("start", async (ctx) => {
+  try {
+    // Get bot's username
+    const botUsername = ctx.me?.username;
+
+    // Reply with the welcome message and the custom keyboard
+    await ctx.reply(`Hello! I'm @${botUsername}. Choose an option below:`, {
+      reply_markup: {
+        keyboard: keyboardLayout,
+        resize_keyboard: true,
+        one_time_keyboard: true,
+      },
+    });
+  } catch (error) {
+    console.error("Error displaying commands list:", error);
+    await ctx.reply("Sorry, there was an error. Try again later.");
+  }
+});
+
+// Handler for the 'sol_amt' button
+bot.callbackQuery("sol_amt", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await ctx.reply("Please enter the SOL amount:");
+});
+
+// Handler for the 'help' button
+bot.callbackQuery("help", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  // Display help message or commands list here
+  await ctx.reply(
+    "Here's how to use me:\n1. Enter SOL Amount - Type /sol-amt and enter the amount."
+  );
+});
+
+bot.start();
+console.log("Bot started");
+
+bot.command("ask-sol-amount", async (ctx) => {
+  await ctx.reply("Please enter the SOL amount:");
+});
+
+bot.on("message", async (ctx) => {
+  if (ctx.message.text && !ctx.message.text.startsWith("/")) {
+    const solAmount = parseFloat(ctx.message.text);
+    if (isNaN(solAmount)) {
+      await ctx.reply("Invalid input. Please enter a valid number.");
+    } else {
+      // Send the SOL amount to the backend (you can implement this part)
+
+      console.log(`current ctx`, ctx);
+      await ctx.reply(`Received SOL amount: ${solAmount}`);
+    }
+  }
+});
+
+// Modified command to /sol-amt
+bot.command("sol-amt", async (ctx) => {
+  try {
+    await ctx.reply("Please enter the SOL amount:");
+    console.log(`User ${ctx.from?.id} requested to enter SOL amount`);
+  } catch (error) {
+    console.error("Error in sol-amt command:", error);
+  }
+});
+
+bot.start();
