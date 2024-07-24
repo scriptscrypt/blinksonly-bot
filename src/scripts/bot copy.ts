@@ -124,23 +124,11 @@ bot.command("amount", async (ctx) => {
     ) {
       await ctx.reply(`You entered SOL amount: ${solAmount}`);
       // Here you can add any additional logic, e.g., sending the amount to a backend
-      console.log(`current ctx`, ctx);
-      console.log(`current chatId`, ctx.chat.id);
-      console.log(`current userId :`, ctx.message.chat.id);
-
-      // Add these to DB
-
-      // Get user's Id and current chat's Id
-
     } else {
       // Provide more detailed feedback or suggestions
       await ctx.reply(
         'It seems like you didn\'t enter a number. Please try again with a valid number, like this: "/amount 0.01".'
       );
-
-      console.log(`current ctx`, ctx);
-      console.log(`current chatId`, ctx.chat.id);
-      console.log(`current userId :`, ctx.message.chat.id);
     }
   } catch (error) {
     console.error("Error processing /amount command:", error);
