@@ -116,71 +116,50 @@ bot.command("magic", async (ctx) => {
       );
     }
 
-    const [amount, ...rest] = ctx.message.text.split(/\s+/);
+    // /magic <address>
+    const [magic, ...rest] = ctx.message.text.split(/\s+/);
     const splAddress = rest.slice(0, -1).join(" ").trim();
-    const solAmount = rest[rest.length - 1];
+    // const [magic, ...rest] = ctx.message.text.split(/\s+/);
+    // const splAddress = rest.slice(0, -1).join(" ").trim();
+    // const solAmount = rest[rest.length - 1];
     console.log(`splAddress :`, splAddress);
-    // Refined validation logic to support various number formats
-    if (
-      solAmount !== "" &&
-      !isNaN(parseFloat(solAmount || "")) &&
-      parseFloat(solAmount || "") > 0
-    ) {
-      await ctx.reply(
-        `You entered SOL amount: ${solAmount} groupId: ${ctx.chat.id}`
-      );
-      // Here you can add any additional logic, e.g., sending the amount to a backend
-      // console.log(`current ctx`, ctx);
-      console.log(`current chatId`, ctx.chat.id);
-      console.log(`current userId :`, ctx.message.chat.id);
 
-      // Add these to DB
-      const client = await clientPromise;
-      const db = client.db();
+    console.log(`current chatId`, ctx.chat.id);
+    console.log(`current userId :`, ctx.message.chat.id);
 
-      // // `groups` is the collection name
-      const groupsCollection = db.collection("groups");
-      if (!ctx.chat.id || !ctx.message.chat.id || !splAddress) {
-        throw new Error("Telegram chat ID is not set in environment variables");
-      }
+    // Add these to DB
+    const client = await clientPromise;
+    const db = client.db();
 
-      // save to DB :
-      console.log(
-        `${ctx.message.chat.id} Id saving to DB`,
-        ctx.message.chat.id
-      );
+    // // `groups` is the collection name
+    const groupsCollection = db.collection("groups");
+    // if (!ctx.chat.id || !ctx.message.chat.id || !splAddress) {
+    //   throw new Error("Telegram chat ID is not set in environment variables");
+    // }
 
-      groupsCollection.insertOne({
-        amount,
-        chatId: ctx.chat.id,
-        chatUserId: ctx.message.chat.id,
-        chatName: ctx.chat.title,
-        chatType: ctx.chat.type,
-        splAddress,
-        timestamp: Date.now().toString(),
-      });
+    // save to DB :
+    console.log(`${ctx.message.chat.id} Id saving to DB`, ctx.message.chat.id);
 
-      await ctx.reply(`Received SOL amount: ${solAmount}`);
+    groupsCollection.insertOne({
+      // amount,
+      chatId: ctx.chat.id,
+      chatUserId: ctx.message.chat.id,
+      chatName: ctx.chat.title,
+      chatType: ctx.chat.type,
+      splAddress,
+      timestamp: Date.now().toString(),
+    });
 
-      // Get a Blink URL :
-      const blinkURL = `https://blinktochat.fun/api/actions/start/${ctx.chat.id}/${splAddress}`;
-      await ctx.reply(blinkURL);
+    // await ctx.reply(`Received SOL amount: ${solAmount}`);
 
-      const dialectUrl = `https://dial.to/devnet?action=solana-action:${blinkURL}`;
+    // Get a Blink URL :
+    const blinkURL = `https://blinktochat.fun/api/actions/start/${ctx.chat.id}/${splAddress}`;
+    await ctx.reply(blinkURL);
 
-      await ctx.reply(dialectUrl);
-      // Get user's Id and current chat's Id
-    } else {
-      // Provide more detailed feedback or suggestions
-      await ctx.reply(
-        `It seems like you didn\'t enter a number. Please try again with a valid number, like this: "/amount 0.01".
-        and groupId : ${ctx.chat.id}`
-      );
+    const dialectUrl = `https://dial.to/devnet?action=solana-action:${blinkURL}`;
 
-      console.log(`current ctx`, ctx);
-      console.log(`current chatId`, ctx.chat.id);
-      console.log(`current userId :`, ctx.message.chat.id);
-    }
+    await ctx.reply(dialectUrl);
+    // Get user's Id and current chat's Id
   } catch (error) {
     console.error("Error processing /amount command:", error);
     await ctx.reply(
