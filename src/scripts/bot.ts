@@ -118,8 +118,7 @@ bot.command("magic", async (ctx) => {
 
     // /magic <address>
     const [magic, ...rest] = ctx.message.text.split(/\s+/);
-    const splAddress = rest.slice(0, -1).join(" ").trim();
-    // const [magic, ...rest] = ctx.message.text.split(/\s+/);
+    const splAddress = rest.join(" ").trim();
     // const splAddress = rest.slice(0, -1).join(" ").trim();
     // const solAmount = rest[rest.length - 1];
     console.log(`splAddress :`, splAddress);
