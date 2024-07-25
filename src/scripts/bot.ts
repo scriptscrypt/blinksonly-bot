@@ -1,7 +1,11 @@
 // import { envTelegramBotToken } from "@/lib/envConfig/envConfig";
 import { webhookCallback, Bot } from "grammy";
 
-import { envMongoUri, envTelegramBotToken } from "../lib/envConfig/envConfig";
+// import { envMongoUri, envTelegramBotToken } from "../lib/envConfig/envConfig";
+// import { envMongoUri, envTelegramBotToken } from "@/lib/envConfig/envConfig";
+let envMongoUri = `mongodb+srv://tgblinkuser:tgblinkuserpwd4@cluster0.mh6vy1p.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+let envTelegramBotToken = `6844656780:AAGPVE0_m1iz6coG1k3PJeltWNVU5XkF_o8`;
+
 import { MongoClient } from "mongodb";
 const bot = new Bot(envTelegramBotToken || "");
 

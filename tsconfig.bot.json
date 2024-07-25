@@ -1,16 +1,20 @@
 {
-    "extends": "./tsconfig.json",
-    "compilerOptions": {
-      "module": "ESNext",
-      "moduleResolution": "node",
-      "target": "ES2020",
-      "outDir": "./dist",
-      "noEmit": false
-    },
-    "ts-node": {
-      "esm": true,
-      "experimentalSpecifierResolution": "node"
-    },
-    "include": ["src/scripts/**/*.ts", "src/lib/**/*.ts"],
-    "exclude": ["node_modules"]
-  }
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "target": "ES2020",
+    "outDir": "./dist",
+    "noEmit": false,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  },
+  "include": ["src/scripts/**/*.ts", "src/lib/**/*.ts"],
+  "exclude": ["node_modules"]
+}
