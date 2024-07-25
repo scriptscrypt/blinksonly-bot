@@ -1,41 +1,50 @@
-import { webhookCallback } from "grammy";
+
+export const dynamic = 'force-dynamic'
+
+export const fetchCache = 'force-no-store'
+
 import { NextRequest, NextResponse } from "next/server";
-import { handleUpdate } from "../../../../scripts/bot";
+import { bot } from "../../../../scripts/bot";
+import { webhookCallback } from "grammy";
+import { envTelegramBotToken } from "@/lib/envConfig/envConfig";
 
-export async function POST(req: NextRequest) {
-  try {
-    // Parse the request body
-    const body = await req.json();
+// export async function POST(req: NextRequest) {
+//   try {
+//     // Parse the request body
+//     const body = await req.json();
 
-    // Create a mock request object
-    const mockReq = {
-      method: req.method,
-      headers: Object.fromEntries(req.headers.entries()),
-      body: body,
-    };
+//     // Create a mock request object
+//     const mockReq = {
+//       method: req.method,
+//       headers: Object.fromEntries(req.headers.entries()),
+//       body: body,
+//     };
 
-    // Create a mock response object
-    const mockRes = {
-      status: (code: number) => ({
-        end: () => {},
-        json: (data: any) => {},
-      }),
-      json: (data: any) => {},
-      send: (data: any) => {},
-      end: () => {},
-    };
+//     // Create a mock response object
+//     const mockRes = {
+//       status: (code: number) => ({
+//         end: () => {},
+//         json: (data: any) => {},
+//       }),
+//       json: (data: any) => {},
+//       send: (data: any) => {},
+//       end: () => {},
+//     };
 
-    // Call handleUpdate with both mock objects
-    await handleUpdate(mockReq as any, mockRes as any);
+//     // Call handleUpdate with both mock objects
+//     await handleUpdate(mockReq as any, mockRes as any);
     
-    // Return a success response
-    return NextResponse.json({ ok: true });
-  } catch (error) {
-    console.error('Error handling update:', error);
-    return NextResponse.json({ ok: false }, { status: 500 });
-  }
-}
+//     // Return a success response
+//     return NextResponse.json({ ok: true });
+//   } catch (error) {
+//     console.error('Error handling update:', error);
+//     return NextResponse.json({ ok: false }, { status: 500 });
+//   }
+// }
 
-export async function GET() {
-  return NextResponse.json({ ok: true, message: "Bot webhook is active" });
-}
+// export async function GET() {
+//   return NextResponse.json({ ok: true, message: "Bot webhook is active" });
+// }
+if (!envTelegramBotToken) throw new Error('TELEGRAM_BOT_TOKEN environment variable not found.')
+
+export const POST = webhookCallback(bot, 'std/http')
