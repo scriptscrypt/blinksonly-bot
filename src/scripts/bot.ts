@@ -168,8 +168,8 @@ bot.command("magic", async (ctx) => {
 });
 
 // For Vercel Node Webhook :
-// export default webhookCallback(bot, "http");
-// export default bot;
+const handleUpdate = webhookCallback(bot, "next-js");
+export { bot, handleUpdate };
 
 // For Dev to start the BOT :
-bot.start();
+// bot.start();

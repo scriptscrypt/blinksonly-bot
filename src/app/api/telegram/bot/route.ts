@@ -1,26 +1,28 @@
 import { webhookCallback } from "grammy";
 import { NextResponse } from "next/server";
-import botHandler from "../../../../scripts/bot";
+import { handleUpdate } from "../../../../scripts/bot";
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-
-    // Create mock request and response objects
-    const mockReq = {
-      method: "POST",
-      headers: request.headers,
-      body: JSON.stringify(body),
-    };
-    const mockRes = {
-      setHeader: () => {},
-      end: () => {},
+    // Grammy's webhookCallback expects a specific request structure
+    const adapatedRequest = {
+      method: request.method,
+      headers: Object.fromEntries(request.headers.entries()),
+      body: await request.text(), // Grammy expects the raw body
     };
 
-    // Call the bot handler
-    await botHandler.handleUpdate(mockReq as any, mockRes as any);
+    // Grammy's webhookCallback also expects a response object
+    const adapatedResponse = {
+      status: (code: number) => ({
+        json: (body: any) => NextResponse.json(body, { status: code }),
+      }),
+    };
 
-    return NextResponse.json({ ok: true });
+    // @ts-ignore - Ignore type mismatch for now
+    const response = await handleUpdate(adapatedRequest, adapatedResponse);
+    
+    // @ts-ignore - Ignore type mismatch for now
+    return response  || NextResponse.json({ ok: true });
   } catch (error) {
     console.error("Error handling update:", error);
     return NextResponse.json({ ok: false }, { status: 500 });
