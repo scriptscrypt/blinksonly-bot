@@ -117,6 +117,17 @@ bot.command("magic", async (ctx) => {
       );
     }
 
+    // Check if the user is an admin or owner
+    const chatMember = await ctx.getChatMember(ctx.message.from.id);
+    if (
+      chatMember.status !== "creator" &&
+      chatMember.status !== "administrator"
+    ) {
+      return await ctx.reply(
+        "Sorry, only administrators and the group owner can use this command."
+      );
+    }
+
     // /magic <address>
     const [magic, ...rest] = ctx.message.text.split(/\s+/);
     const splAddress = rest.join(" ").trim();

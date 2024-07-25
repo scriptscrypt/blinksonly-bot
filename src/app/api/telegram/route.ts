@@ -1,24 +1,6 @@
+import { envTelegramBotToken } from "@/lib/envConfig/envConfig";
 import { Bot, webhookCallback } from "grammy";
 import { NextRequest, NextResponse } from "next/server";
-
-const bot = new Bot(process.env.TELEGRAM_BOT_TOKEN || "");
-
-bot.command("ask-sol-amount", async (ctx) => {
-  await ctx.reply("Please enter the SOL amount:");
-});
-
-bot.on("message", async (ctx) => {
-  if (ctx.message.text && !ctx.message.text.startsWith("/")) {
-    const solAmount = parseFloat(ctx.message.text);
-    if (isNaN(solAmount)) {
-      await ctx.reply("Invalid input. Please enter a valid number.");
-    } else {
-      await ctx.reply(`Received SOL amount: ${solAmount}`);
-    }
-  }
-});
-
-const webhookHandler = webhookCallback(bot, "next-js");
 
 export async function POST(req: NextRequest) {
   try {
@@ -41,7 +23,7 @@ export async function POST(req: NextRequest) {
 
     // Call the webhook handler with the mock request and response
     await webhookHandler(mockRequest as any, mockResponse as any);
-    
+
     // Return the response
     return mockResponse.status(200).end();
   } catch (error) {
@@ -49,3 +31,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false }, { status: 500 });
   }
 }
+const bot = new Bot(envTelegramBotToken || "");
+const webhookHandler = webhookCallback(bot, "next-js");
