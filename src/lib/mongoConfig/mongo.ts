@@ -1,5 +1,5 @@
 import { MongoClient } from "mongodb";
-import { envMongoUri } from "../envConfig";
+import { envMongoUri } from "../envConfig/envConfig";
 
 declare const global: {
   _mongoClientPromise: Promise<MongoClient> | undefined;
