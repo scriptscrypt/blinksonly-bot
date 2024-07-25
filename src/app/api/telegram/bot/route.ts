@@ -1,45 +1,37 @@
 import { webhookCallback } from "grammy";
-import { NextResponse } from "next/server";
-import bot from "../../../../scripts/bot";
+import { NextRequest, NextResponse } from "next/server";
+import { handleUpdate } from "../../../../scripts/bot";
 
-// export async function POST(request: Request) {
-//   try {
-//     // Grammy's webhookCallback expects a specific request structure
-//     const adapatedRequest = {
-//       method: request.method,
-//       headers: Object.fromEntries(request.headers.entries()),
-//       body: await request.text(), // Grammy expects the raw body
-//     };
-
-//     // Grammy's webhookCallback also expects a response object
-//     const adapatedResponse = {
-//       status: (code: number) => ({
-//         json: (body: any) => NextResponse.json(body, { status: code }),
-//       }),
-//     };
-
-//     // @ts-ignore - Ignore type mismatch for now
-//     const response = await handleUpdate(adapatedRequest, adapatedResponse);
-
-//     // @ts-ignore - Ignore type mismatch for now
-//     return response || NextResponse.json({ ok: true });
-//   } catch (error) {
-//     console.error("Error handling update:", error);
-//     return NextResponse.json({ ok: false }, { status: 500 });
-//   }
-// }
-
-// export async function GET() {
-//   return NextResponse.json({ ok: true, message: "Bot webhook is active" });
-// }
-
-export async function POST(request: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const body = await request.json();
-    await bot.handleUpdate(body);
+    // Parse the request body
+    const body = await req.json();
+
+    // Create a mock request object
+    const mockReq = {
+      method: req.method,
+      headers: Object.fromEntries(req.headers.entries()),
+      body: body,
+    };
+
+    // Create a mock response object
+    const mockRes = {
+      status: (code: number) => ({
+        end: () => {},
+        json: (data: any) => {},
+      }),
+      json: (data: any) => {},
+      send: (data: any) => {},
+      end: () => {},
+    };
+
+    // Call handleUpdate with both mock objects
+    await handleUpdate(mockReq as any, mockRes as any);
+    
+    // Return a success response
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error("Error handling update:", error);
+    console.error('Error handling update:', error);
     return NextResponse.json({ ok: false }, { status: 500 });
   }
 }
