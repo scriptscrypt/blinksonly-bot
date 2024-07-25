@@ -173,7 +173,8 @@ bot.command("magic", async (ctx) => {
 
 // For Vercel Node Webhook :
 const handleUpdate = webhookCallback(bot, "next-js");
-export { bot, handleUpdate };
+// export { bot, handleUpdate };
+export default bot;
 
 // For Dev to start the BOT :
 // bot.start();
