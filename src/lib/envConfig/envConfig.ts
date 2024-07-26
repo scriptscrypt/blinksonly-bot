@@ -1,7 +1,3 @@
-import { config } from 'dotenv';
-
-config(); // This loads the .env file
-
 if (!process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN) {
   throw new Error('TELEGRAM_BOT_TOKEN is not set in the environment variables');
 }
